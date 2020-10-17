@@ -1,0 +1,2 @@
+# django_workshop
+Warsztat
