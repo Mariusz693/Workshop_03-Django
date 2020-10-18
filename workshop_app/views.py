@@ -8,7 +8,11 @@ def rooms_view(request):
     for room in rooms:
         reservation_dates = [reservation.date for reservation in room.reservation_set.all()]
         room.reserved = datetime.date.today() in reservation_dates
-    return render(request, 'workshop_app/rooms.html', context={"rooms": rooms})
+    return render(
+                request,
+                'workshop_app/rooms.html',
+                context={"rooms": rooms}
+            )
 
 
 def add_room_view(request):
@@ -29,9 +33,18 @@ def add_room_view(request):
             projector = False
 
         if not name:
-            return render(request, 'workshop_app/add_room.html', context={"error": "Brak nazwy sali"})
+            return render(
+                        request,
+                        'workshop_app/add_room.html',
+                        context={"error": "Brak nazwy sali"}
+                    )
+
         if Room.objects.filter(name=name).first():
-            return render(request, 'workshop_app/add_room.html', context={"error": "Sala już istnieje w bazie danych"})
+            return render(
+                        request,
+                        'workshop_app/add_room.html',
+                        context={"error": "Sala już istnieje w bazie danych"}
+                    )
 
         Room.objects.create(name=name, capacity=capacity, projector=projector)
         return redirect("rooms")
@@ -46,7 +59,11 @@ def delete_room_view(request, id_room):
 def modify_room_view(request, id_room):
     room = Room.objects.get(id=id_room)
     if request.method == 'GET':
-        return render(request, 'workshop_app/modify_room.html', context={"room": room})
+        return render(
+                    request,
+                    'workshop_app/modify_room.html',
+                    context={"room": room}
+                )
 
     if request.method == 'POST':
         name = request.POST.get("name")
@@ -62,9 +79,18 @@ def modify_room_view(request, id_room):
             projector = False
 
         if not name:
-            return render(request, 'workshop_app/modify_room.html', context={"room": room, "error": "Brak nazwy sali"})
+            return render(
+                        request,
+                        'workshop_app/modify_room.html',
+                        context={"room": room, "error": "Brak nazwy sali"}
+                    )
+
         if name != room.name and Room.objects.filter(name=name).first():
-            return render(request, 'workshop_app/modify_room.html', context={"error": "Sala już istnieje w bazie danych"})
+            return render(
+                        request,
+                        'workshop_app/modify_room.html',
+                        context={"error": "Sala już istnieje w bazie danych"}
+                    )
 
         room.name = name
         room.capacity = capacity
@@ -77,20 +103,36 @@ def reservation_room_view(request, id_room):
     room = Room.objects.get(id=id_room)
     reservations = room.reservation_set.filter(date__gte=str(datetime.date.today())).order_by('date')
     if request.method == 'GET':
-        return render(request, 'workshop_app/reservation.html', context={"room": room, "reservations": reservations})
+        return render(
+                    request,
+                    'workshop_app/reservation.html',
+                    context={"room": room, "reservations": reservations}
+                )
 
     if request.method == 'POST':
         date = request.POST.get("date-reservation")
         message = request.POST.get("message")
         if Reservation.objects.filter(room=room).filter(date=date):
-            return render(request, 'workshop_app/reservation.html', context={"room": room,
-                                                                             "reservations": reservations,
-                                                                             "error": "Sala już zajęta!"})
+            return render(
+                        request,
+                        'workshop_app/reservation.html',
+                        context={
+                            "room": room,
+                            "reservations": reservations,
+                            "error": "Sala już zajęta!"
+                        }
+                    )
 
         if date < str(datetime.date.today()):
-            return render(request, 'workshop_app/reservation.html', context={"room": room,
-                                                                             "reservations": reservations,
-                                                                             "error": "Źle wprowadzona data!"})
+            return render(
+                        request,
+                        'workshop_app/reservation.html',
+                        context={
+                            "room": room,
+                            "reservations": reservations,
+                            "error": "Źle wprowadzona data!"
+                        }
+                    )
 
         Reservation.objects.create(room=room, date=date, message=message)
         return redirect("rooms")
@@ -99,7 +141,11 @@ def reservation_room_view(request, id_room):
 def details_room_view(request, id_room):
     room = Room.objects.get(id=id_room)
     reservations = room.reservation_set.filter(date__gte=str(datetime.date.today())).order_by('date')
-    return render(request, 'workshop_app/details_room.html', context={"room": room, "reservations": reservations})
+    return render(
+                request,
+                'workshop_app/details_room.html',
+                context={"room": room, "reservations": reservations}
+            )
 
 
 def search_room_view(request):
@@ -121,15 +167,12 @@ def search_room_view(request):
             reservation_dates = [reservation.date for reservation in room.reservation_set.all()]
             room.reserved = str(datetime.date.today()) in reservation_dates
         return render(
-            request,
-            'workshop_app/rooms_search.html',
-            context={
-                "rooms": rooms,
-                "form": {
-                    "name": name,
-                    "capacity": capacity,
-                    "projector": projector
-                }
-            })
+                    request,
+                    'workshop_app/rooms_search.html',
+                    context={
+                        "rooms": rooms,
+                        "form": {"name": name, "capacity": capacity, "projector": projector}
+                    }
+                )
     else:
         return render(request, 'workshop_app/rooms_search.html')
