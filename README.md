@@ -1,2 +1,2 @@
-# django_workshop
+# Workshop_03-Django
 Warsztat
