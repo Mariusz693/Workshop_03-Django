@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'workshop_app',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +78,7 @@ WSGI_APPLICATION = 'workshop.wsgi.application'
 DATABASES = {
     'default': {
         'HOST': '127.0.0.1',
-        'NAME': 'django_db',
+        'NAME': 'django_workshop',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'postgres',
         'PASSWORD': 'coderslab',
